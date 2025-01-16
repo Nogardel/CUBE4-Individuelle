@@ -1,8 +1,10 @@
 package com.example.projet_individuel.controller;
 
-import com.example.projet_individuel.model.Service;
-import com.example.projet_individuel.repository.ServiceRepository;
+import com.example.projet_individuel.model.ServiceEntity;
+import com.example.projet_individuel.service.ServiceApiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,38 +14,69 @@ import java.util.List;
 public class ServiceController {
 
     @Autowired
-    private ServiceRepository serviceRepository;
+    private ServiceApiService serviceApiService;
 
-    // Récupérer tous les services
+    /**
+     * Récupérer tous les services
+     */
     @GetMapping
-    public List<Service> getAllServices() {
-        return serviceRepository.findAll();
+    public ResponseEntity<List<ServiceEntity>> getAllServices() {
+        List<ServiceEntity> services = serviceApiService.getAllServices();
+        return ResponseEntity.ok(services);  // 200 OK
     }
 
-    // Récupérer un service par ID
+    /**
+     * Récupérer un service par ID
+     */
     @GetMapping("/{id}")
-    public Service getServiceById(@PathVariable Long id) {
-        return serviceRepository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
+    public ResponseEntity<ServiceEntity> getServiceById(@PathVariable Long id) {
+        try {
+            ServiceEntity service = serviceApiService.getServiceById(id);
+            return ResponseEntity.ok(service); // 200 OK
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
     }
 
-    // Ajouter un nouveau service
+    /**
+     * Ajouter un nouveau service
+     */
     @PostMapping
-    public Service createService(@RequestBody Service service) {
-        return serviceRepository.save(service);
+    public ResponseEntity<ServiceEntity> createService(@RequestBody ServiceEntity serviceEntity) {
+        try {
+            ServiceEntity newService = serviceApiService.createService(serviceEntity);
+            return new ResponseEntity<>(newService, HttpStatus.CREATED); // 201 Created
+        } catch (RuntimeException e) {
+            // Si tu veux gérer un cas d'erreur (ex: champ 'nom' vide)
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    // Mettre à jour un service
+    /**
+     * Mettre à jour un service
+     */
     @PutMapping("/{id}")
-    public Service updateService(@PathVariable Long id, @RequestBody Service serviceDetails) {
-        Service service = serviceRepository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
-        service.setNom(serviceDetails.getNom());
-        return serviceRepository.save(service);
+    public ResponseEntity<ServiceEntity> updateService(@PathVariable Long id, @RequestBody ServiceEntity serviceDetails) {
+        try {
+            ServiceEntity updatedService = serviceApiService.updateService(id, serviceDetails);
+            return ResponseEntity.ok(updatedService); // 200 OK
+        } catch (RuntimeException e) {
+            // Soit on considère 404 si non trouvé, soit 400 si champs invalides
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    // Supprimer un service
+    /**
+     * Supprimer un service
+     */
     @DeleteMapping("/{id}")
-    public void deleteService(@PathVariable Long id) {
-        Service service = serviceRepository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
-        serviceRepository.delete(service);
+    public ResponseEntity<Void> deleteService(@PathVariable Long id) {
+        try {
+            serviceApiService.deleteService(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (RuntimeException e) {
+            // ex: si l'ID n'existe pas
+            return ResponseEntity.notFound().build();
+        }
     }
 }

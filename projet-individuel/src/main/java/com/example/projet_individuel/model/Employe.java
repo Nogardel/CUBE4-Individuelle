@@ -1,29 +1,29 @@
 package com.example.projet_individuel.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
+import javafx.beans.property.*;
 
 @Entity
+@Table(name = "employe")
 public class Employe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 100, nullable = false)
     private String nom;
+
+    @Column(length = 100, nullable = false)
     private String prenom;
 
-    @Column(name = "telephone_fixe") // Correspond au nom exact dans la base de données
+    @Column(name = "telephone_fixe", length = 15)
     private String telephoneFixe;
 
-    @Column(name = "telephone_portable") // Correspond au nom exact dans la base de données
+    @Column(name = "telephone_portable", length = 15)
     private String telephonePortable;
 
+    @Column(length = 100, unique = true)
     private String email;
 
     @ManyToOne
@@ -32,9 +32,42 @@ public class Employe {
 
     @ManyToOne
     @JoinColumn(name = "service_id")
-    private Service service;
+    private ServiceEntity service;
 
-    // Getters et Setters
+    // --- Propriétés JavaFX ---
+    public LongProperty idProperty() {
+        return new SimpleLongProperty(id);
+    }
+
+    public StringProperty nomProperty() {
+        return new SimpleStringProperty(nom);
+    }
+
+    public StringProperty prenomProperty() {
+        return new SimpleStringProperty(prenom);
+    }
+
+    public StringProperty emailProperty() {
+        return new SimpleStringProperty(email);
+    }
+
+    public StringProperty telephoneFixeProperty() {
+        return new SimpleStringProperty(telephoneFixe);
+    }
+
+    public StringProperty telephonePortableProperty() {
+        return new SimpleStringProperty(telephonePortable);
+    }
+
+    public StringProperty siteProperty() {
+        return new SimpleStringProperty(site != null ? site.getVille() : "Aucun site");
+    }
+
+    public StringProperty serviceProperty() {
+        return new SimpleStringProperty(service != null ? service.getNom() : "Aucun service");
+    }
+
+    // --- Getters et Setters ---
     public Long getId() {
         return id;
     }
@@ -91,11 +124,18 @@ public class Employe {
         this.site = site;
     }
 
-    public Service getService() {
+    public ServiceEntity getService() {
         return service;
     }
 
-    public void setService(Service service) {
+    public void setService(ServiceEntity service) {
         this.service = service;
+    }
+
+    @Override
+    public String toString() {
+        return "Nom: " + nom + ", Prénom: " + prenom + ", Email: " + email +
+                ", Site: " + (site != null ? site.getVille() : "Aucun") +
+                ", Service: " + (service != null ? service.getNom() : "Aucun");
     }
 }

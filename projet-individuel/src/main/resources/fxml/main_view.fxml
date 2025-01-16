@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.projet_individuel.ui.MainViewController">
+    <!-- Barre de recherche en haut -->
+    <top>
+        <HBox spacing="10.0">
+            <padding>
+                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+            </padding>
+            <TextField fx:id="searchField" promptText="Rechercher un employé par nom" />
+            <ComboBox fx:id="siteComboBox" promptText="Filtrer par site" />
+            <ComboBox fx:id="serviceComboBox" promptText="Filtrer par service" />
+            <Button text="Rechercher" onAction="#handleSearch" />
+        </HBox>
+    </top>
+
+    <!-- Tableau central -->
+    <center>
+        <TableView fx:id="employeTableView">
+            <columns>
+                <TableColumn fx:id="nomColumn" text="Nom" />
+                <TableColumn fx:id="prenomColumn" text="Prénom" />
+                <TableColumn fx:id="emailColumn" text="Email" />
+                <TableColumn fx:id="siteColumn" text="Site" />
+                <TableColumn fx:id="serviceColumn" text="Service" />
+            </columns>
+        </TableView>
+    </center>
+
+    <!-- Zone de détails en bas -->
+    <bottom>
+        <VBox spacing="5.0">
+            <padding>
+                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+            </padding>
+            <Label text="Détails de l'employé sélectionné :" />
+            <TextArea fx:id="detailsArea" editable="false" />
+        </VBox>
+    </bottom>
+</BorderPane>

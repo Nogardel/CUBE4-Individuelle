@@ -4,15 +4,15 @@ import jakarta.persistence.*;
 import javafx.beans.property.*;
 
 @Entity
-@Table(name = "site")
-public class Site {
+@Table(name = "service")
+public class ServiceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, length = 255, nullable = false)
-    private String ville;
+    @Column(unique = true, length = 100, nullable = false)
+    private String nom;
 
     // --- Propriétés JavaFX (pour TableView, UI) ---
     public LongProperty idProperty() {
@@ -20,12 +20,11 @@ public class Site {
     }
     @Override
     public String toString() {
-        return this.ville; // Retourne le nom de la ville pour l'affichage
+        return this.nom; // Retourne le nom du service pour l'affichage
     }
 
-
-    public StringProperty villeProperty() {
-        return new SimpleStringProperty(ville);
+    public StringProperty nomProperty() {
+        return new SimpleStringProperty(nom);
     }
 
     // --- Getters et Setters pour JPA ---
@@ -37,11 +36,11 @@ public class Site {
         this.id = id;
     }
 
-    public String getVille() {
-        return ville;
+    public String getNom() {
+        return nom;
     }
 
-    public void setVille(String ville) {
-        this.ville = ville;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 }

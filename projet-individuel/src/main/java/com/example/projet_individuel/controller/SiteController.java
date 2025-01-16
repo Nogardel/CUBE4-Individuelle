@@ -1,16 +1,11 @@
 package com.example.projet_individuel.controller;
 
 import com.example.projet_individuel.model.Site;
-import com.example.projet_individuel.repository.SiteRepository;
+import com.example.projet_individuel.service.SiteApiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,39 +14,69 @@ import java.util.List;
 public class SiteController {
 
     @Autowired
-    private SiteRepository siteRepository;
+    private SiteApiService siteApiService;
 
-    // Récupérer tous les sites
+    /**
+     * Récupérer tous les sites
+     */
     @GetMapping
-    public List<Site> getAllSites() {
-        return siteRepository.findAll();
+    public ResponseEntity<List<Site>> getAllSites() {
+        List<Site> sites = siteApiService.getAllSites();
+        return ResponseEntity.ok(sites); // 200 OK
     }
 
-    // Récupérer un site par ID
+    /**
+     * Récupérer un site par ID
+     */
     @GetMapping("/{id}")
-    public Site getSiteById(@PathVariable Long id) {
-        return siteRepository.findById(id).orElseThrow(() -> new RuntimeException("Site not found"));
+    public ResponseEntity<Site> getSiteById(@PathVariable Long id) {
+        try {
+            Site site = siteApiService.getSiteById(id);
+            return ResponseEntity.ok(site); // 200 OK
+        } catch (RuntimeException e) {
+            // ex: site introuvable
+            return ResponseEntity.notFound().build(); // 404
+        }
     }
 
-    // Ajouter un nouveau site
+    /**
+     * Ajouter un nouveau site
+     */
     @PostMapping
-    public Site createSite(@RequestBody Site site) {
-        System.out.println("Reçu : " + site.getVille());
-        return siteRepository.save(site);
+    public ResponseEntity<Site> createSite(@RequestBody Site site) {
+        try {
+            Site newSite = siteApiService.createSite(site);
+            return new ResponseEntity<>(newSite, HttpStatus.CREATED); // 201 Created
+        } catch (RuntimeException e) {
+            // ex: ville vide ?
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    // Mettre à jour un site
+    /**
+     * Mettre à jour un site
+     */
     @PutMapping("/{id}")
-    public Site updateSite(@PathVariable Long id, @RequestBody Site siteDetails) {
-        Site site = siteRepository.findById(id).orElseThrow(() -> new RuntimeException("Site not found"));
-        site.setVille(siteDetails.getVille());
-        return siteRepository.save(site);
+    public ResponseEntity<Site> updateSite(@PathVariable Long id, @RequestBody Site siteDetails) {
+        try {
+            Site updatedSite = siteApiService.updateSite(id, siteDetails);
+            return ResponseEntity.ok(updatedSite); // 200 OK
+        } catch (RuntimeException e) {
+            // Site introuvable, etc.
+            return ResponseEntity.notFound().build(); // 404
+        }
     }
 
-    // Supprimer un site
+    /**
+     * Supprimer un site
+     */
     @DeleteMapping("/{id}")
-    public void deleteSite(@PathVariable Long id) {
-        Site site = siteRepository.findById(id).orElseThrow(() -> new RuntimeException("Site not found"));
-        siteRepository.delete(site);
+    public ResponseEntity<Void> deleteSite(@PathVariable Long id) {
+        try {
+            siteApiService.deleteSite(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
