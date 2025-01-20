@@ -91,20 +91,49 @@ public class MainViewController {
 
     @FXML
     private void handleSearch() {
-        String searchTerm = searchField.getText();
-        Site selectedSite = siteComboBox.getValue();
-        ServiceEntity selectedService = serviceComboBox.getValue();
+        try {
+            // Récupérer les valeurs des champs de recherche
+            String searchTerm = searchField.getText();
+            Site selectedSite = siteComboBox.getValue();
+            ServiceEntity selectedService = serviceComboBox.getValue();
 
-        // Passez les objets directement
-        List<Employe> filteredEmployes = employeApiService.searchEmployes(searchTerm, selectedSite, selectedService);
-        employeTableView.getItems().setAll(filteredEmployes);
+            // Afficher les paramètres pour vérifier qu'ils sont corrects
+            System.out.println("Search Term: " + searchTerm);
+            System.out.println("Selected Site: " + (selectedSite != null ? selectedSite.getVille() : "None"));
+            System.out.println("Selected Service: " + (selectedService != null ? selectedService.getNom() : "None"));
+
+            // Filtrer les employés
+            List<Employe> filteredEmployes = employeApiService.searchEmployes(
+                    searchTerm,
+                    selectedSite != null ? selectedSite.getId() : null,
+                    selectedService != null ? selectedService.getId() : null
+            );
+
+            // Mettre à jour le tableau avec les données filtrées
+            employeTableView.getItems().setAll(filteredEmployes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Selected Service: ");
+        }
     }
 
 
+    @FXML
     private void handleTableClick(MouseEvent event) {
         Employe selectedEmploye = employeTableView.getSelectionModel().getSelectedItem();
         if (selectedEmploye != null) {
-            detailsArea.setText(selectedEmploye.toString());
+            // Construire les détails ligne par ligne
+            StringBuilder details = new StringBuilder();
+            details.append("Nom : ").append(selectedEmploye.getNom()).append("\n");
+            details.append("Prénom : ").append(selectedEmploye.getPrenom()).append("\n");
+            details.append("Email : ").append(selectedEmploye.getEmail()).append("\n");
+            details.append("Téléphone fixe : ").append(selectedEmploye.getTelephoneFixe() != null ? selectedEmploye.getTelephoneFixe() : "N/A").append("\n");
+            details.append("Téléphone portable : ").append(selectedEmploye.getTelephonePortable() != null ? selectedEmploye.getTelephonePortable() : "N/A").append("\n");
+            details.append("Site : ").append(selectedEmploye.getSite() != null ? selectedEmploye.getSite().getVille() : "N/A").append("\n");
+            details.append("Service : ").append(selectedEmploye.getService() != null ? selectedEmploye.getService().getNom() : "N/A").append("\n");
+
+            // Afficher les détails dans le TextArea
+            detailsArea.setText(details.toString());
         }
     }
 }

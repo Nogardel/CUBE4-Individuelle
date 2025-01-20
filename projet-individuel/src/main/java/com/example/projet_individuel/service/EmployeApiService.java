@@ -126,22 +126,17 @@ public class EmployeApiService {
             employe.setService(service);
         }
     }
-    public List<Employe> searchEmployes(String searchTerm, Site site, ServiceEntity service) {
-        // Extrait les IDs des objets
-        Long siteId = (site != null) ? site.getId() : null;
-        Long serviceId = (service != null) ? service.getId() : null;
-
+    public List<Employe> searchEmployes(String searchTerm, Long siteId, Long serviceId) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
-                .queryParam("nom", searchTerm)
-                .queryParam("siteId", siteId)
-                .queryParam("serviceId", serviceId);
+                .queryParam("nom", searchTerm != null ? searchTerm : "")
+                .queryParam("siteId", siteId != null ? siteId : "")
+                .queryParam("serviceId", serviceId != null ? serviceId : "");
 
         RestTemplate restTemplate = new RestTemplate();
         Employe[] response = restTemplate.getForObject(builder.toUriString(), Employe[].class);
 
         return Arrays.asList(response);
     }
-
 
 
 }
