@@ -11,14 +11,17 @@ import java.util.List;
 @Repository
 public interface EmployeRepository extends JpaRepository<Employe, Long> {
 
-    @Query("SELECT e FROM Employe e WHERE " +
-            "(:nom IS NULL OR e.nom LIKE %:nom%) AND " +
-            "(:siteId IS NULL OR e.site.id = :siteId) AND " +
-            "(:serviceId IS NULL OR e.service.id = :serviceId)")
-    List<Employe> searchByFilters(
-            @Param("nom") String nom,
-            @Param("siteId") Long siteId,
-            @Param("serviceId") Long serviceId);
+        @Query("SELECT e FROM Employe e WHERE " +
+                        "(:nom IS NULL OR e.nom LIKE %:nom%) AND " +
+                        "(:siteId IS NULL OR e.site.id = :siteId) AND " +
+                        "(:serviceId IS NULL OR e.service.id = :serviceId)")
+        List<Employe> searchByFilters(
+                        @Param("nom") String nom,
+                        @Param("siteId") Long siteId,
+                        @Param("serviceId") Long serviceId);
+
+        @Query("SELECT e FROM Employe e WHERE (:nom IS NULL OR e.nom LIKE %:nom%) AND (:siteId IS NULL OR e.site.id = :siteId) AND (:serviceId IS NULL OR e.service.id = :serviceId)")
+        List<Employe> findEmployesByCriteria(@Param("nom") String nom, @Param("siteId") Long siteId,
+                        @Param("serviceId") Long serviceId);
 
 }
-

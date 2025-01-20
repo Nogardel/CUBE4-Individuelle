@@ -18,11 +18,11 @@ public class Site {
     public LongProperty idProperty() {
         return new SimpleLongProperty(id);
     }
+
     @Override
     public String toString() {
         return this.ville; // Retourne le nom de la ville pour l'affichage
     }
-
 
     public StringProperty villeProperty() {
         return new SimpleStringProperty(ville);

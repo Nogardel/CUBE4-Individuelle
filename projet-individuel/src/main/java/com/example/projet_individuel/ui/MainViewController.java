@@ -106,17 +106,17 @@ public class MainViewController {
             List<Employe> filteredEmployes = employeApiService.searchEmployes(
                     searchTerm,
                     selectedSite != null ? selectedSite.getId() : null,
-                    selectedService != null ? selectedService.getId() : null
-            );
+                    selectedService != null ? selectedService.getId() : null);
+
+            // Vérifier les résultats du filtrage
+            System.out.println("Filtered Employees: " + filteredEmployes.size());
 
             // Mettre à jour le tableau avec les données filtrées
             employeTableView.getItems().setAll(filteredEmployes);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Selected Service: ");
         }
     }
-
 
     @FXML
     private void handleTableClick(MouseEvent event) {
@@ -127,10 +127,18 @@ public class MainViewController {
             details.append("Nom : ").append(selectedEmploye.getNom()).append("\n");
             details.append("Prénom : ").append(selectedEmploye.getPrenom()).append("\n");
             details.append("Email : ").append(selectedEmploye.getEmail()).append("\n");
-            details.append("Téléphone fixe : ").append(selectedEmploye.getTelephoneFixe() != null ? selectedEmploye.getTelephoneFixe() : "N/A").append("\n");
-            details.append("Téléphone portable : ").append(selectedEmploye.getTelephonePortable() != null ? selectedEmploye.getTelephonePortable() : "N/A").append("\n");
-            details.append("Site : ").append(selectedEmploye.getSite() != null ? selectedEmploye.getSite().getVille() : "N/A").append("\n");
-            details.append("Service : ").append(selectedEmploye.getService() != null ? selectedEmploye.getService().getNom() : "N/A").append("\n");
+            details.append("Téléphone fixe : ")
+                    .append(selectedEmploye.getTelephoneFixe() != null ? selectedEmploye.getTelephoneFixe() : "N/A")
+                    .append("\n");
+            details.append("Téléphone portable : ").append(
+                    selectedEmploye.getTelephonePortable() != null ? selectedEmploye.getTelephonePortable() : "N/A")
+                    .append("\n");
+            details.append("Site : ")
+                    .append(selectedEmploye.getSite() != null ? selectedEmploye.getSite().getVille() : "N/A")
+                    .append("\n");
+            details.append("Service : ")
+                    .append(selectedEmploye.getService() != null ? selectedEmploye.getService().getNom() : "N/A")
+                    .append("\n");
 
             // Afficher les détails dans le TextArea
             detailsArea.setText(details.toString());
