@@ -9,6 +9,9 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -71,6 +74,22 @@ public class ProjetIndividuelApplication extends Application {
 			Scene adminScene = new Scene(adminRoot);
 			primaryStage.setScene(adminScene);
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void retournerInterfaceUtilisateur() {
+		try {
+			// Charger l'interface utilisateur classique
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main_view.fxml"));
+			Parent root = loader.load();
+
+			// Obtenir le Stage actuel à partir d'un Node
+			Stage stage = (Stage) root.getScene().getWindow();
+
+			stage.setScene(new Scene(root));
+			stage.show();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

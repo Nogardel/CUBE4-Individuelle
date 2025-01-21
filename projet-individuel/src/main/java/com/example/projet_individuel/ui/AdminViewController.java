@@ -7,10 +7,19 @@ import com.example.projet_individuel.service.EmployeApiService;
 import com.example.projet_individuel.service.ServiceApiService;
 import com.example.projet_individuel.service.SiteApiService;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import java.io.IOException;
+import com.example.projet_individuel.util.SpringFXMLLoader;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 
@@ -25,6 +34,9 @@ public class AdminViewController {
 
     @Autowired
     private ServiceApiService serviceApiService;
+
+    @Autowired
+    private ApplicationContext springContext;
 
     @FXML
     private TableView<Employe> employeTableView;
@@ -116,6 +128,17 @@ public class AdminViewController {
         siteTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 fillSiteForm(newValue);
+            }
+        });
+
+        // Ajouter un écouteur de clavier à la scène après que la scène soit prête
+        employeTableView.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isControlDown() && event.getCode() == KeyCode.U) { // Exemple de combinaison Ctrl + U
+                        retournerInterfaceUtilisateur();
+                    }
+                });
             }
         });
     }
@@ -270,5 +293,17 @@ public class AdminViewController {
         fillSiteComboBox();
         fillServiceComboBox();
         System.out.println("Données rafraîchies");
+    }
+
+    private void retournerInterfaceUtilisateur() {
+        try {
+            SpringFXMLLoader fxmlLoader = new SpringFXMLLoader(springContext);
+            Parent root = fxmlLoader.load(getClass().getResource("/fxml/main_view.fxml"));
+            Stage stage = (Stage) employeTableView.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
