@@ -143,8 +143,6 @@ public class EmployeApiService {
     public List<Employe> getEmployes(String nom, String site, String service) {
         // Initialiser la liste des employés
         List<Employe> tousLesEmployes = employeRepository.findAll();
-
-        // Filtrer par nom, site et service
         return tousLesEmployes.stream()
                 .filter(employe -> (nom == null || employe.getNom().equalsIgnoreCase(nom)))
                 .filter(employe -> (site == null || employe.getSite().getVille().equalsIgnoreCase(site)))
@@ -158,7 +156,7 @@ public class EmployeApiService {
 
         public static void setupAdminAccess(Scene scene, Stage primaryStage) {
             scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                if (event.isControlDown() && event.getCode() == KeyCode.A) { // Exemple de combinaison Ctrl + A
+                if (event.isControlDown() && event.getCode() == KeyCode.A) {
                     showPasswordDialog(primaryStage);
                 }
             });
@@ -172,17 +170,14 @@ public class EmployeApiService {
 
             dialog.showAndWait().ifPresent(password -> {
                 if (ADMIN_PASSWORD.equals(password)) {
-                    // Afficher la page d'administration
                     showAdminPage(primaryStage);
                 } else {
-                    // Afficher un message d'erreur
                     System.out.println("Mot de passe incorrect");
                 }
             });
         }
 
         private static void showAdminPage(Stage primaryStage) {
-            // Logique pour afficher la page d'administration
             System.out.println("Accès à la page d'administration accordé");
         }
     }

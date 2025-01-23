@@ -5,6 +5,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE employe;
 TRUNCATE TABLE site;
 TRUNCATE TABLE service;
+TRUNCATE TABLE user;
 
 -- Réactiver les contraintes de clé étrangère
 SET FOREIGN_KEY_CHECKS = 1;
@@ -266,4 +267,9 @@ INSERT INTO employe (nom, prenom, telephone_fixe, telephone_portable, email, sit
 ('Schmitt', 'Lina', '03892345678', '06891234579', 'lina.schmitt2@business.org', 2, 2),
 ('Barbier', 'Raphaël', NULL, '07912345690', 'raphael.barbier2@email.net', 3, 4),
 ('Leroux', 'Anna', '03923456789', '06912345690', 'anna.leroux2@business.org', 4, 1);
+
+-- Ajout des utilisateurs administrateurs
+INSERT INTO user (nom, prenom, email, role, mot_de_passe) VALUES
+('Admin', 'One', 'admin.one@company.com', 'ADMIN', 'password1'),
+('Admin', 'Two', 'admin.two@company.com', 'ADMIN', 'password2');
 

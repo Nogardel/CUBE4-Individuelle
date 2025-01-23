@@ -29,3 +29,13 @@ CREATE TABLE IF NOT EXISTS employe (
     FOREIGN KEY (service_id) REFERENCES service(id)
     ON DELETE RESTRICT
     );
+
+-- Création de la table user
+CREATE TABLE IF NOT EXISTS user (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prenom VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    mot_de_passe VARCHAR(100) NOT NULL
+);

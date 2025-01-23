@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -16,6 +18,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.example.projet_individuel.service.UserService;
 
 @SpringBootApplication
 public class ProjetIndividuelApplication extends Application {
@@ -23,9 +27,13 @@ public class ProjetIndividuelApplication extends Application {
 	private ConfigurableApplicationContext springContext;
 	private static final String ADMIN_PASSWORD = "admin123";
 
+	@Autowired
+	private UserService userService;
+
 	@Override
 	public void init() {
 		springContext = new SpringApplicationBuilder(ProjetIndividuelApplication.class).run();
+		userService = springContext.getBean(UserService.class); // Obtenez le bean UserService ici
 	}
 
 	@Override
@@ -51,19 +59,28 @@ public class ProjetIndividuelApplication extends Application {
 	}
 
 	private void showPasswordDialog(Stage primaryStage) {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Accès Administrateur");
-		dialog.setHeaderText("Entrez le mot de passe administrateur");
-		dialog.setContentText("Mot de passe:");
+		TextInputDialog emailDialog = new TextInputDialog();
+		emailDialog.setTitle("Accès Administrateur");
+		emailDialog.setHeaderText("Entrez votre email d'administrateur");
+		emailDialog.setContentText("Email:");
 
-		dialog.showAndWait().ifPresent(password -> {
-			if (ADMIN_PASSWORD.equals(password)) {
-				// Afficher la page d'administration
-				showAdminPage(primaryStage);
-			} else {
-				// Afficher un message d'erreur
-				System.out.println("Mot de passe incorrect");
-			}
+		emailDialog.showAndWait().ifPresent(email -> {
+			TextInputDialog passwordDialog = new TextInputDialog();
+			passwordDialog.setTitle("Accès Administrateur");
+			passwordDialog.setHeaderText("Entrez votre mot de passe");
+			passwordDialog.setContentText("Mot de passe:");
+
+			passwordDialog.showAndWait().ifPresent(password -> {
+				if (userService.validateAdminCredentials(email, password)) {
+					showAdminPage(primaryStage);
+				} else {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Erreur d'authentification");
+					alert.setHeaderText(null);
+					alert.setContentText("Email ou mot de passe incorrect.");
+					alert.showAndWait();
+				}
+			});
 		});
 	}
 
