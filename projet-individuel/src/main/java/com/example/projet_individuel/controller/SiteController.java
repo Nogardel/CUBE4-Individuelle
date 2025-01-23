@@ -43,14 +43,9 @@ public class SiteController {
      * Ajouter un nouveau site
      */
     @PostMapping
-    public ResponseEntity<Site> createSite(@RequestBody Site site) {
-        try {
-            Site newSite = siteApiService.createSite(site);
-            return new ResponseEntity<>(newSite, HttpStatus.CREATED); // 201 Created
-        } catch (RuntimeException e) {
-            // ex: ville vide ?
-            return ResponseEntity.badRequest().build();
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public Site createSite(@RequestBody Site site) {
+        return siteApiService.createSite(site);
     }
 
     /**

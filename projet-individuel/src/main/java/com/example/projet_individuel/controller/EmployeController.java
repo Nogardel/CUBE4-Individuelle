@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/employes")
-@Validated  // Si on utilise Bean Validation sur les champs
+@Validated // Si on utilise Bean Validation sur les champs
 public class EmployeController {
 
     private static final Logger logger = LoggerFactory.getLogger(EmployeController.class);
@@ -30,7 +30,7 @@ public class EmployeController {
     @GetMapping
     public ResponseEntity<List<Employe>> getAllEmployes() {
         List<Employe> employes = employeApiService.getAllEmployes();
-        return ResponseEntity.ok(employes);  // 200 OK
+        return ResponseEntity.ok(employes); // 200 OK
     }
 
     /**
@@ -38,8 +38,12 @@ public class EmployeController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Employe> getEmployeById(@PathVariable Long id) {
-        Employe employe = employeApiService.getEmployeById(id);
-        return ResponseEntity.ok(employe); // 200 OK
+        try {
+            Employe employe = employeApiService.getEmployeById(id);
+            return ResponseEntity.ok(employe);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
@@ -70,7 +74,8 @@ public class EmployeController {
         } catch (RuntimeException e) {
             // Selon le cas (employé introuvable vs. validation), on renvoie 404 ou 400
             logger.error("Erreur lors de la mise à jour de l'employé : {}", e.getMessage());
-            // Pour simplifier, on renvoie 400. On pourrait différencier si le message = "introuvable" => 404
+            // Pour simplifier, on renvoie 400. On pourrait différencier si le message =
+            // "introuvable" => 404
             return ResponseEntity.badRequest().build();
         }
     }

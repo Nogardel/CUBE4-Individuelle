@@ -2,9 +2,17 @@ package com.example.projet_individuel.model;
 
 import jakarta.persistence.*;
 import javafx.beans.property.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "service")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceEntity {
 
     @Id
@@ -18,6 +26,7 @@ public class ServiceEntity {
     public LongProperty idProperty() {
         return new SimpleLongProperty(id);
     }
+
     @Override
     public String toString() {
         return this.nom; // Retourne le nom du service pour l'affichage

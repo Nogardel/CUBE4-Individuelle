@@ -2,9 +2,17 @@ package com.example.projet_individuel.model;
 
 import jakarta.persistence.*;
 import javafx.beans.property.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "site")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Site {
 
     @Id

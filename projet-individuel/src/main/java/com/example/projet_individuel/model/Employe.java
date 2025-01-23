@@ -2,7 +2,13 @@ package com.example.projet_individuel.model;
 
 import jakarta.persistence.*;
 import javafx.beans.property.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "employe")
 public class Employe {
@@ -137,5 +143,11 @@ public class Employe {
         return "Nom: " + nom + ", Prénom: " + prenom + ", Email: " + email +
                 ", Site: " + (site != null ? site.getVille() : "Aucun") +
                 ", Service: " + (service != null ? service.getNom() : "Aucun");
+    }
+
+    public Employe(Long id, String nom, String prenom) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
     }
 }
