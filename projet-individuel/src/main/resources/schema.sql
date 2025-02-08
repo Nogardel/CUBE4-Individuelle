@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS employe (
                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                        nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
-    telephone_fixe VARCHAR(15),
+    telephone_fixe VARCHAR(15) DEFAULT NULL,
     telephone_portable VARCHAR(15),
     email VARCHAR(100) UNIQUE,
     site_id BIGINT,

@@ -1,5 +1,6 @@
 package com.example.projet_individuel.service;
 
+import com.example.projet_individuel.exception.DeletionNotAllowedException;
 import com.example.projet_individuel.model.ServiceEntity;
 import com.example.projet_individuel.repository.ServiceRepository;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+import com.example.projet_individuel.model.Employe;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -125,5 +128,28 @@ class ServiceApiServiceTest {
 
         // Assert
         verify(serviceRepository).delete(service);
+    }
+
+    @Test
+    void deleteService_WhenServiceHasEmployees_ShouldThrowException() {
+        // Arrange
+        List<Employe> employes = new ArrayList<>();
+        Employe employe = Employe.builder()
+                .id(1L)
+                .nom("John")
+                .prenom("Doe")
+                .build();
+        employes.add(employe);
+
+        ServiceEntity service = ServiceEntity.builder()
+                .id(1L)
+                .nom("RH")
+                .employes(employes)
+                .build();
+        when(serviceRepository.findById(1L)).thenReturn(Optional.of(service));
+
+        // Act & Assert
+        assertThrows(DeletionNotAllowedException.class, () -> serviceApiService.deleteService(1L));
+        verify(serviceRepository, never()).delete(any());
     }
 }

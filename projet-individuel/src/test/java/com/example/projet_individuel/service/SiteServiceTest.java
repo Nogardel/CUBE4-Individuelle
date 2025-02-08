@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.projet_individuel.model.Site;
 import com.example.projet_individuel.repository.SiteRepository;
+import com.example.projet_individuel.exception.DeletionNotAllowedException;
+import com.example.projet_individuel.model.Employe; // Ajout de l'import
 
 @ExtendWith(MockitoExtension.class)
 class SiteServiceTest {
@@ -138,5 +141,23 @@ class SiteServiceTest {
 
         // Assert
         verify(siteRepository).delete(site);
+    }
+
+    @Test
+    void deleteSite_WhenSiteHasEmployees_ShouldThrowException() {
+        // Arrange
+        List<Employe> employes = new ArrayList<>();
+        employes.add(new Employe(1L, "John", "Doe"));
+
+        Site site = Site.builder()
+                .id(1L)
+                .ville("Paris")
+                .employes(employes)
+                .build();
+        when(siteRepository.findById(1L)).thenReturn(Optional.of(site));
+
+        // Act & Assert
+        assertThrows(DeletionNotAllowedException.class, () -> siteApiService.deleteSite(1L));
+        verify(siteRepository, never()).delete(any());
     }
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "site")
@@ -21,6 +23,10 @@ public class Site {
 
     @Column(unique = true, length = 255, nullable = false)
     private String ville;
+
+    @OneToMany(mappedBy = "site", fetch = FetchType.EAGER) // Changement ici
+    @Builder.Default
+    private List<Employe> employes = new ArrayList<>();
 
     // --- Propriétés JavaFX (pour TableView, UI) ---
     public LongProperty idProperty() {
@@ -51,5 +57,14 @@ public class Site {
 
     public void setVille(String ville) {
         this.ville = ville;
+    }
+
+    // Ajout du getter explicite pour employes
+    public List<Employe> getEmployes() {
+        return employes;
+    }
+
+    public void setEmployes(List<Employe> employes) {
+        this.employes = employes;
     }
 }

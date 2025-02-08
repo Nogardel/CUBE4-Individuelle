@@ -4,14 +4,19 @@ import com.example.projet_individuel.model.Site;
 import com.example.projet_individuel.repository.SiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.projet_individuel.exception.DeletionNotAllowedException;
 
+import jakarta.persistence.EntityManager; // Ajouter cette ligne
 import java.util.List;
 
-@Service  // On indique qu'il s'agit d'un "bean" de service Spring
+@Service // On indique qu'il s'agit d'un "bean" de service Spring
 public class SiteApiService {
 
     @Autowired
     private SiteRepository siteRepository;
+
+    @Autowired
+    private EntityManager entityManager; // Ajouter cette ligne
 
     /**
      * Récupérer tous les sites
@@ -22,6 +27,7 @@ public class SiteApiService {
 
     /**
      * Récupérer un site par ID
+     * 
      * @throws RuntimeException si le site n'existe pas
      */
     public Site getSiteById(Long id) {
@@ -55,6 +61,19 @@ public class SiteApiService {
     public void deleteSite(Long id) {
         Site site = siteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Site not found (ID: " + id + ")"));
+
+        // Charger explicitement la collection d'employés
+        int employeCount = entityManager.createQuery(
+                "SELECT COUNT(e) FROM Employe e WHERE e.site.id = :siteId", Long.class)
+                .setParameter("siteId", id)
+                .getSingleResult()
+                .intValue();
+
+        if (employeCount > 0) {
+            throw new DeletionNotAllowedException(
+                    "Impossible de supprimer le site car il contient encore des employés");
+        }
+
         siteRepository.delete(site);
     }
 }

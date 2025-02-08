@@ -1,17 +1,23 @@
 package com.example.projet_individuel.service;
 
+import com.example.projet_individuel.model.Employe; // Ajout de l'import
+import com.example.projet_individuel.exception.DeletionNotAllowedException;
 import com.example.projet_individuel.model.ServiceEntity;
 import com.example.projet_individuel.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityManager; // Ajouter cette ligne
 import java.util.List;
 
-@Service  // Attention à l'import : org.springframework.stereotype.Service
+@Service // Attention à l'import : org.springframework.stereotype.Service
 public class ServiceApiService {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private EntityManager entityManager; // Ajouter cette ligne
 
     /**
      * Récupérer tous les services
@@ -22,6 +28,7 @@ public class ServiceApiService {
 
     /**
      * Récupérer un service par ID
+     * 
      * @throws RuntimeException si le service n'existe pas
      */
     public ServiceEntity getServiceById(Long id) {
@@ -31,6 +38,7 @@ public class ServiceApiService {
 
     /**
      * Créer un nouveau service
+     * 
      * @throws RuntimeException si le nom est vide ou invalide, par exemple
      */
     public ServiceEntity createService(ServiceEntity serviceEntity) {
@@ -53,10 +61,26 @@ public class ServiceApiService {
 
     /**
      * Supprimer un service
+     * 
+     * @throws DeletionNotAllowedException si le service contient des employés
+     * @throws RuntimeException            si le service n'existe pas
      */
     public void deleteService(Long id) {
-        ServiceEntity serviceEntity = serviceRepository.findById(id)
+        ServiceEntity service = serviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Service not found (ID: " + id + ")"));
-        serviceRepository.delete(serviceEntity);
+
+        // Charger explicitement la collection d'employés
+        int employeCount = entityManager.createQuery(
+                "SELECT COUNT(e) FROM Employe e WHERE e.service.id = :serviceId", Long.class)
+                .setParameter("serviceId", id)
+                .getSingleResult()
+                .intValue();
+
+        if (employeCount > 0) {
+            throw new DeletionNotAllowedException(
+                    "Impossible de supprimer le service car il contient encore des employés");
+        }
+
+        serviceRepository.delete(service);
     }
 }

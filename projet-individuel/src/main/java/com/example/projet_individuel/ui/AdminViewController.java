@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import java.io.IOException;
 import com.example.projet_individuel.util.SpringFXMLLoader;
 import org.springframework.context.ApplicationContext;
+import com.example.projet_individuel.exception.DeletionNotAllowedException;
 
 import java.util.List;
 
@@ -253,9 +254,24 @@ public class AdminViewController {
     private void deleteSite() {
         Site selectedSite = siteTableView.getSelectionModel().getSelectedItem();
         if (selectedSite != null) {
-            siteApiService.deleteSite(selectedSite.getId());
-            loadSites(); // Recharger les données après suppression
+            try {
+                siteApiService.deleteSite(selectedSite.getId());
+                loadSites(); // Recharger les données après suppression
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "Le site a été supprimé avec succès.");
+            } catch (DeletionNotAllowedException e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de la suppression du site.");
+            }
         }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     // Méthodes pour gérer les services
@@ -283,8 +299,16 @@ public class AdminViewController {
     private void deleteService() {
         ServiceEntity selectedService = serviceTableView.getSelectionModel().getSelectedItem();
         if (selectedService != null) {
-            serviceApiService.deleteService(selectedService.getId());
-            loadServices(); // Recharger les données après suppression
+            try {
+                serviceApiService.deleteService(selectedService.getId());
+                loadServices(); // Recharger les données après suppression
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "Le service a été supprimé avec succès.");
+            } catch (DeletionNotAllowedException e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Une erreur est survenue lors de la suppression du service.");
+            }
         }
     }
 

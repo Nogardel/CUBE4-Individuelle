@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "service")
@@ -21,6 +23,10 @@ public class ServiceEntity {
 
     @Column(unique = true, length = 100, nullable = false)
     private String nom;
+
+    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER) // Changement ici
+    @Builder.Default
+    private List<Employe> employes = new ArrayList<>();
 
     // --- Propriétés JavaFX (pour TableView, UI) ---
     public LongProperty idProperty() {
@@ -51,5 +57,14 @@ public class ServiceEntity {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    // Ajout du getter explicite pour employes
+    public List<Employe> getEmployes() {
+        return employes;
+    }
+
+    public void setEmployes(List<Employe> employes) {
+        this.employes = employes;
     }
 }
